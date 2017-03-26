@@ -3,7 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task3Logic", "Task3Logic\Task3Logic.csproj", "{AD4B8BD1-5A34-4C59-A0C7-FE32285A77BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task3Tests", "Task3Tests\Task3Tests.csproj", "{9273A935-1E82-407E-9DA9-93C581787767}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task3.NUnitTests", "Task3.NUnitTests\Task3.NUnitTests.csproj", "{4771BDD0-FC28-40E4-BCA5-097970D7DB83}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD4B8BD1-5A34-4C59-A0C7-FE32285A77BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD4B8BD1-5A34-4C59-A0C7-FE32285A77BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD4B8BD1-5A34-4C59-A0C7-FE32285A77BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD4B8BD1-5A34-4C59-A0C7-FE32285A77BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9273A935-1E82-407E-9DA9-93C581787767}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9273A935-1E82-407E-9DA9-93C581787767}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9273A935-1E82-407E-9DA9-93C581787767}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9273A935-1E82-407E-9DA9-93C581787767}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4771BDD0-FC28-40E4-BCA5-097970D7DB83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4771BDD0-FC28-40E4-BCA5-097970D7DB83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4771BDD0-FC28-40E4-BCA5-097970D7DB83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4771BDD0-FC28-40E4-BCA5-097970D7DB83}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
