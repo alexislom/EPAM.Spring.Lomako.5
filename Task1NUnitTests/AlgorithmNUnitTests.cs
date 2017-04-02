@@ -1,9 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Task1Logic;
 
 namespace Task1NUnitTests
@@ -11,31 +9,27 @@ namespace Task1NUnitTests
     [TestFixture]
     public class AlgorithmNUnitTests
     {
-        [Test]
-        public void NeutonMethod_125Root3_5Res()
+        public IEnumerable<TestCaseData> TestData
         {
-            uint number = 16;
-            uint power = 2;
-            double eps = 1e-05;
-            double expected = 4;
+            get
+            {
+                yield return new TestCaseData(9, 2, double.Epsilon).Returns(3);
+                yield return new TestCaseData(-9, 2, double.Epsilon).Returns(double.NaN);
+                yield return new TestCaseData(8, -3, double.Epsilon).Returns(Math.Pow(8, 1.0 / (-3)));
+                yield return new TestCaseData(-8, 3, double.Epsilon).Returns(double.NaN);
+                yield return new TestCaseData(10, 1, double.Epsilon).Returns(10);
+                yield return new TestCaseData(2, 0, double.Epsilon).Returns(double.PositiveInfinity);
+                yield return new TestCaseData(-2, 0, double.Epsilon).Returns(double.PositiveInfinity);
+                yield return new TestCaseData(0, 2, double.Epsilon).Returns(0);
+                yield return new TestCaseData(-2, 2, double.Epsilon).Returns(double.NaN);
 
-            double actual = Algorithm.NeutonMethod(number, power, eps);
-
-            Assert.AreEqual(expected, actual, eps);
+            }
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void EpsIsNegativeTest()
+        [Test, TestCaseSource(nameof(TestData))]
+        public static double Root_Test(double number, int power, double epsilon)
         {
-            uint number = 125;
-            uint power = 3;
-            double eps = 5;
-            double expected = 5;
-
-            double actual = Algorithm.NeutonMethod(number, power, eps);
-
-            Assert.AreEqual(expected, actual, eps);
+            return Algorithm.Root(number, power, epsilon);
         }
     }
 }

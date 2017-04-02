@@ -12,20 +12,27 @@ namespace Task1Logic
     public static class Algorithm
     {
         #region public methods
+
         /// <summary>
-        /// Neuton method of calculating the nth root
+        /// Method of calculating the nth root
         /// </summary>
         /// <param name="value">The number from which the root is extracted</param>
         /// <param name="power">Degree of extracted root</param>
         /// <param name="epsilon">accuracy</param>
         /// <returns>The value of the root nth degree</returns>
-        public static double NeutonMethod(uint value, uint power, double epsilon = 1e-05)
+        public static double Root(double value, int power, double epsilon = 1e-05)
         {
             if (value == 0)
                 return 0;
-            if (power == 0)
+            if (power == 1)
                 return value;
-            if (epsilon < 0 || epsilon >= 1)
+            if (power == 0)
+                return double.PositiveInfinity;
+            if (value < 0 && power % 2 == 0)
+                return double.NaN;
+            if (value < 0 && power > 0)
+                return double.NaN;
+            if (epsilon <= 0 || epsilon >= 1)
                 throw new ArgumentException();
 
             return NeutonNthRoot(value, power, epsilon);
@@ -33,6 +40,7 @@ namespace Task1Logic
         #endregion
 
         #region private methods 
+
         /// <summary>
         /// Intermediate method of calculating the nth root
         /// </summary>
@@ -40,18 +48,21 @@ namespace Task1Logic
         /// <param name="power"></param>
         /// <param name="epsilon"></param>
         /// <returns>The value of the root nth degree</returns>
-        private static double NeutonNthRoot(uint value, uint power, double epsilon = 1e-05)
+        private static double NeutonNthRoot(double value, int power, double epsilon = 1e-05)
         {
+            if (power < 0)
+                return 1.0 / NeutonNthRoot(value, -power, epsilon);
+
             double xNext = value / power;
             double xPrev = 0;
             double df = 0;
 
-            while (true)
+            while (Math.Abs(xNext - xPrev) >= epsilon)
             {
-                df = -(Math.Pow(xNext, power) - value) / (power * Math.Pow(xNext, power - 1));
+                df = (Math.Pow(xNext, power) - value) / (power * Math.Pow(xNext, power - 1));
                 if (Math.Abs(xNext - xPrev) < epsilon) break;
                 xPrev = xNext;
-                xNext = xNext + df;
+                xNext = xNext - df;
             }
             return xNext;
         }

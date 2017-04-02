@@ -260,9 +260,14 @@ namespace Task3Logic
             return coefficients.SequenceEqual(((Polynomial)obj)?.coefficients);
         }
 
-        public override int GetHashCode() => this.ToString().GetHashCode();
+        public override int GetHashCode() => this.coefficients.GetHashCode();
 
         #endregion
+
+        //public bool Equals(Polynomial p)
+        //{
+        //    if(this == p)
+        //}
     }
 }
 

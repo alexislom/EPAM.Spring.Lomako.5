@@ -10,28 +10,38 @@ namespace Task1Tests
         [TestMethod]
         public void NeutonMethod_125Root3_5Res()
         {
-            uint number = 125;
-            uint power = 3;
-            double eps = 1e-05;
+            double number = 125;
+            int power = 3;
+
             double expected = 5;
 
-            double actual = Algorithm.NeutonMethod(number, power, eps);
+            double actual = Algorithm.Root(number, power, double.Epsilon);
 
-            Assert.AreEqual(expected, actual, eps);
+            Assert.AreEqual(expected, actual, double.Epsilon);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void EpsIsNegativeTest()
+        public void WrongEpsilon_Test()
         {
-            uint number = 125;
-            uint power = 3;
-            double eps = 5;
+            double number = 125;
+            int power = 3;
+            
             double expected = 5;
 
-            double actual = Algorithm.NeutonMethod(number, power, eps);
+            double actual = Algorithm.Root(number, power, double.Epsilon + 5);
 
-            Assert.AreEqual(expected, actual, eps);
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Root_NegativeNumber_NaNRes_Test()
+        {
+            double expected = Math.Pow(-8, 1.0 / 3);
+
+            double actual = Algorithm.Root(-8, 3, double.Epsilon);
+
+            Assert.AreEqual(expected, actual);
         }
     }
 }
