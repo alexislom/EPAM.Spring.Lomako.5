@@ -1,99 +1,70 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Task2Logic;
+
 
 namespace Task2NUnitTests
 {
     [TestFixture]
     public class AlgorithmsNUnitTests
     {
-        [Test]
-        public void Euclid_Test()
+
+        #region GCD for 2 arguments
+
+        public IEnumerable<TestCaseData> TestDataGDCFor2Args
         {
-            int first = 585;
-            int second = 81;
-            int expected = 9;
-
-            int gcd = Algorithms.GreatestCommonDivisorByEuclid(first, second);
-
-            Assert.AreEqual(expected, gcd);
-
+            get
+            {
+                yield return new TestCaseData(2, 8).Returns(2);
+                yield return new TestCaseData(2, -8).Returns(2);
+                yield return new TestCaseData(0, 0).Returns(0);
+                yield return new TestCaseData(8, 16).Returns(8);
+                yield return new TestCaseData(1, 2).Returns(1);
+                yield return new TestCaseData(585, 81).Returns(9);
+            }
         }
 
-        [Test]
-        public void Bin_Test()
+        [Test, TestCaseSource(nameof(TestDataGDCFor2Args))]
+        public static double GCD_2Args_Euclid_Test(int first, int second)
         {
-            int first = 585;
-            int second = 81;
-            int expected = 9;
-
-            int gcd = Algorithms.BinaryGreatestCommonDivision(first, second);
-
-            Assert.AreEqual(expected, gcd);
+            return Algorithms.GreatestCommonDivisorByEuclid(first, second);
         }
 
-        [Test]
-        public void MoreArgs_EuclidTest()
+        [Test, TestCaseSource(nameof(TestDataGDCFor2Args))]
+        public static double GCD_2Args_Bin_Test(int first, int second)
         {
-            int first = 585;
-            int second = 81;
-            int third = 9;
-            int fourth = 3;
-            int more = 12;
-            int expected = 3;
-
-            int gcd = Algorithms.GreatestCommonDivisorByEuclid(first, second, third, fourth, more);
-
-            Assert.AreEqual(expected, gcd);
+            return Algorithms.BinaryGreatestCommonDivision(first, second);
         }
 
-        [Test]
-        public void MoreArgs_BinTest()
+        #endregion
+
+        #region GDC for more than 2 args
+
+        public IEnumerable<TestCaseData> TestDataGDCForMoreThan2Args
         {
-            int first = 585;
-            int second = 81;
-            int third = 9;
-            int fourth = 3;
-            int more = 12;
-            int expected = 3;
-
-            int gcd = Algorithms.BinaryGreatestCommonDivision(first, second, third, fourth, more);
-
-            Assert.AreEqual(expected, gcd);
+            get
+            {
+                yield return new TestCaseData(new int[] { 24, 18, 6}).Returns(6);
+                yield return new TestCaseData(new int[] { 2, 8, 4 }).Returns(2);
+                yield return new TestCaseData(new int[] { 0, 0, 0, 0, 0, 0 }).Returns(0);
+                yield return new TestCaseData(new int[] { 1, 2, 3, 4, 5 }).Returns(1);
+                yield return new TestCaseData(new int[] { 585, 81, 9, 3, 12 }).Returns(3);
+            }
         }
 
-        [Test]
-        public void NegativeArg_EuclidTest()
+        [Test, TestCaseSource(nameof(TestDataGDCForMoreThan2Args))]
+        public static double GDC_MoreThan2Arguments_Euclid_Test(params int[] values)
         {
-            int first = -585;
-            int second = 81;
-            int third = -9;
-            int fourth = 3;
-            int more = 12;
-            int expected = 3;
-
-            int gcd = Algorithms.GreatestCommonDivisorByEuclid(first, second, third, fourth, more);
-
-            Assert.AreEqual(expected, gcd);
+            return Algorithms.GreatestCommonDivisorByEuclid(values);
         }
 
-        [Test]
-        public void NegativeArgs_BinTest()
+        [Test, TestCaseSource(nameof(TestDataGDCForMoreThan2Args))]
+        public static double GDC_MoreThan2Arguments_Bin_Test(params int[] values)
         {
-            int first = -585;
-            int second = 81;
-            int third = -9;
-            int fourth = 3;
-            int more = 12;
-            int expected = 3;
-
-            int gcd = Algorithms.BinaryGreatestCommonDivision(first, second, third, fourth, more);
-
-            Assert.AreEqual(expected, gcd);
+            return Algorithms.BinaryGreatestCommonDivision(values);
         }
+
+        #endregion
     }
 }

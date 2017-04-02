@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Task2Logic
 {
@@ -138,19 +134,17 @@ namespace Task2Logic
         /// <returns>GCD</returns>
         private static int GDCForSeveralValues(gcdDelegate gdc, params int[] values)
         {
+            if (values == null)
+                throw new ArgumentNullException();
             if (values.Length < 3)
-            {
                 throw new ArgumentException("Less than 3 values");
-            }
 
             int temp = gdc(values[0], values[1]);
 
             for (int i = 2; i < values.Length; i++)
             {
                 if (temp == 1)
-                {
                     return 1;
-                }
                 temp = gdc(temp, values[i]);
             }
             return temp;
