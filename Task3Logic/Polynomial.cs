@@ -12,7 +12,7 @@ namespace Task3Logic
     public class Polynomial : ICloneable, IEquatable<Polynomial>
     {
         #region Fields
-
+         
         private double[] coefficients;
         private int order;
 
