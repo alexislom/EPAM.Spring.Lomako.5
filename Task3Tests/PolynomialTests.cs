@@ -1,10 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Task3Logic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Task3Logic.Tests
 {
@@ -83,22 +78,5 @@ namespace Task3Logic.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod]
-        public void DivideTest()
-        {
-            var a = new Polynomial(-42, 0, -12, 1);
-            var b = new Polynomial(-3, 1);
-
-            var q = new Polynomial(-27, -9, 1);
-            var r = new Polynomial(-123, 0, 0, 0);
-            var actualR = new Polynomial(2);
-
-            var actual = Polynomial.Divide(a, b, out actualR);
-
-            Console.WriteLine(actualR);
-
-            CollectionAssert.AreEqual(q.Coefficients, actual.Coefficients);
-            CollectionAssert.AreEqual(r.Coefficients, actualR.Coefficients);
-        }
     }
 }

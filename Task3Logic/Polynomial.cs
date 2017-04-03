@@ -9,7 +9,7 @@ namespace Task3Logic
     /// <summary>
     /// Polynomial with real coefficients
     /// </summary>
-    public class Polynomial
+    public class Polynomial : ICloneable, IEquatable<Polynomial>
     {
         #region Fields
 
@@ -27,11 +27,17 @@ namespace Task3Logic
 
         #region Ctors
 
+        public Polynomial() : this(0) { }
+
+        public Polynomial(double a, double b) : this(new double[] { a, b }) { }
+
+        public Polynomial(Polynomial p) : this(p.coefficients) { }
+
         public Polynomial(params double[] coefficients)
         {
             if (coefficients == null)
                 throw new ArgumentNullException();
-            if (coefficients.Length < 1)
+            if (coefficients.Length == 0)
                 throw new ArgumentException();
 
             this.coefficients = coefficients;
@@ -46,32 +52,16 @@ namespace Task3Logic
         #region Methods
 
         /// <summary>
-        /// Initializes a new polynomial with the given coefficients
-        /// </summary>
-        /// <param name="coefficients">The coefficients of the polynomial</param>
-        /// <returns>The specified polynomial</returns>
-        public static Polynomial FromCoefficients(params double[] coefficients)
-        {
-            if (coefficients == null)
-                throw new ArgumentNullException("coefficients");
-            if (coefficients.Length == 0)
-                throw new InvalidOperationException();
-            return new Polynomial(coefficients);
-        }
-
-        /// <summary>
         /// Evaluates the polynomial for the given input value
         /// </summary>
         /// <param name="x">The value of the variable</param>
-        /// <returns>The value of the polynomial</returns>
+        /// <returns>The value of the polynomial in current point</returns>
         public double Evaluate(double x)
         {
-            double t = 0.0;
+            double result = 0.0;
             for(int i = this.coefficients.Length - 1; i >= 0; i--)
-            {
-                t = (t * x) + this.coefficients[i];
-            }
-            return t;
+                result = (result * x) + this.coefficients[i];
+            return result;
         }
 
         /// <summary>
@@ -85,6 +75,7 @@ namespace Task3Logic
                 throw new ArgumentOutOfRangeException("n");
             if (n >= this.coefficients.Length)
                 return 0.0;
+
             return this.coefficients[n];
         }
 
@@ -96,63 +87,64 @@ namespace Task3Logic
         {
             double[] coefficients = new double[this.Degree];
             for(int i = 0; i < coefficients.Length; i++)
-            {
                 coefficients[i] = (i + 1) * this.Coefficient(i + 1);
-            }
+
             return new Polynomial(coefficients);
         }
 
         /// <summary>
         /// Integrates the polynomail
         /// </summary>
-        /// <param name="C">The integration constant</param>
+        /// <param name="C">The integration constant(coefficient of zero degree)</param>
         /// <returns>The integral of the polynomial</returns>
         public Polynomial Integrate(double C)
         {
             double[] coefficients = new double[this.Degree + 2];
             coefficients[0] = C;
             for (int i = 1; i < coefficients.Length; i++)
-            {
                 coefficients[i] = this.Coefficient(i - 1) / ((double)i);
-            }
+
             return new Polynomial(coefficients);
         }
 
-        /// <summary>
-        /// Computes the quotient of two polynomials
-        /// </summary>
-        /// <param name="p1">The dividend polynomial</param>
-        /// <param name="p2">The divisor polynomial</param>
-        /// <param name="remainder">The remainder polynomial</param>
-        /// <returns>The quotient polynomial</returns>
-        /// <remarks>p1 = q*p2 + r</remarks>
-        public static Polynomial Divide(Polynomial p1, Polynomial p2, out Polynomial remainder)
+        public static Polynomial Negate(Polynomial p)
         {
-            if (p1 == null)
-                throw new ArgumentNullException("p1");
-            if (p2 == null)
-                throw new ArgumentNullException("p2");
-            if (p2.Degree >= p1.Degree)
-                throw new InvalidOperationException();
-            
-            double a = p2.Coefficient(p2.Degree);
-            double[] r = new double[p1.Degree + 1];
-            for (int i = 0; i < r.Length; i++)
-            {
-                r[i] = p1.Coefficient(i);
-            }
-            double[] q = new double[(p1.Degree - p2.Degree) + 1];
-            for(int k = q.Length - 1; k >= 0; k--)
-            {
-                q[k] = r[p2.Degree + k] / a;
-                r[p2.Degree + k] = 0.0;
-                for(int j = (p2.Degree + k) - 1; j >= k; j--)
-                {
-                    r[j] -= q[k] * p2.Coefficient(j - k);
-                }
-            }
-            remainder = new Polynomial(r);
-            return new Polynomial(q);
+            return -p;
+        }
+
+        public static Polynomial Add(Polynomial p1, Polynomial p2)
+        {
+            return p1 + p2;
+        }
+
+        public static Polynomial Add(Polynomial p, double value)
+        {
+            return p + value;
+        }
+
+        public static Polynomial Add(double value, Polynomial p)
+        {
+            return p + value;
+        }
+
+        public static Polynomial Subtract(Polynomial p1, Polynomial p2)
+        {
+            return p1 - p2;
+        }
+
+        public static Polynomial Multiply(Polynomial p1, Polynomial p2)
+        {
+            return p1 * p2;
+        }
+
+        public static Polynomial Multiply(Polynomial p, double x)
+        {
+            return p * x;
+        }
+
+        public static Polynomial Multiply(double x, Polynomial p)
+        {
+            return p * x;
         }
 
         #endregion
@@ -161,45 +153,37 @@ namespace Task3Logic
 
         public static Polynomial operator +(Polynomial p1, Polynomial p2)
         {
-            if (p1 == null)
-                throw new ArgumentNullException("p1");
-            if (p2 == null)
-                throw new ArgumentNullException("p2");
+            Check(p1,p2);
+
             double[] coefficients = new double[Math.Max(p1.Degree, p2.Degree) + 1];
             for (int i = 0; i < coefficients.Length; i++)
-            {
                 coefficients[i] = p1.Coefficient(i) + p2.Coefficient(i);
-            }
+
             return new Polynomial(coefficients);
         }
 
         public static Polynomial operator -(Polynomial p)
         {
-            if (p == null)
-                throw new ArgumentNullException("p");
+            Check(p);
+
             double[] coefficients = new double[p.Degree + 1];
             for (int i = 0; i < coefficients.Length; i++)
-            {
                 coefficients[i] = -p.Coefficient(i);
-            }
+
             return new Polynomial(coefficients);
         }
 
         public static Polynomial operator -(Polynomial p1, Polynomial p2)
         {
-            if (p1 == null)
-                throw new ArgumentNullException("p1");
-            if (p2 == null)
-                throw new ArgumentNullException("p2");
+            Check(p1, p2);
+
             return p1 + (-p2);
         }
 
         public static Polynomial operator *(Polynomial p1, Polynomial p2)
         {
-            if (p1 == null)
-                throw new ArgumentNullException("p1");
-            if (p2 == null)
-                throw new ArgumentNullException("p2");
+            Check(p1,p2);
+
             double[] coefficients = new double[(p1.Degree + p2.Degree) + 1];
             for (int i = 0; i <= p1.Degree; i++)
             {
@@ -213,26 +197,44 @@ namespace Task3Logic
 
         public static Polynomial operator *(double value, Polynomial p)
         {
-            if (p == null)
-                throw new ArgumentNullException("p");
+            Check(p);
+
             double[] coefficients = new double[p.Degree + 1];
             for (int i = 0; i < coefficients.Length; i++)
-            {
                 coefficients[i] = value * p.Coefficient(i);
-            }
+
             return new Polynomial(coefficients);
         }
 
         public static Polynomial operator *(Polynomial p, double value)
         {
-            if (p == null)
-                throw new ArgumentNullException("p");
+            Check(p);
+
             return value * p;
+        }
+
+        public static bool operator ==(Polynomial p1, Polynomial p2)
+        {
+            if (ReferenceEquals(p1, p2)) return true;
+            if (ReferenceEquals(p1, null)) return false;
+            return p1.Equals(p2);
+        }
+
+        public static bool operator !=(Polynomial p1, Polynomial p2)
+        {
+            if (ReferenceEquals(p1, p2)) return true;
+            if (ReferenceEquals(p1, null)) return false;
+            return !p1.Equals(p2);
+        }
+
+        public static implicit operator Polynomial(double value)
+        {
+            return new Polynomial(value);
         }
 
         #endregion
 
-        #region Override methods from object
+        #region Overrides methods
 
         public override string ToString()
         {
@@ -257,17 +259,50 @@ namespace Task3Logic
         {
             if (this.Degree != (obj as Polynomial)?.Degree)
                 return false;
-            return coefficients.SequenceEqual(((Polynomial)obj)?.coefficients);
+            return this.coefficients.SequenceEqual(((Polynomial)obj)?.coefficients);
         }
 
-        public override int GetHashCode() => this.coefficients.GetHashCode();
+        public bool Equals(Polynomial other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return this.coefficients.SequenceEqual(other.coefficients);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + this.coefficients.GetHashCode();
+                return hash;
+            }
+        }
+
+        public Polynomial Clone()
+        {
+            return new Polynomial(this);
+        }
+
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
 
         #endregion
 
-        //public bool Equals(Polynomial p)
-        //{
-        //    if(this == p)
-        //}
+        #region Private methods
+
+        private static void Check(params Polynomial[] refs)
+        {
+            foreach(var i in refs)
+            {
+                if(i == null)
+                    throw new ArgumentNullException(nameof(i));
+            }
+        }
+
+        #endregion
     }
 }
 

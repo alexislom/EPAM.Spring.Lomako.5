@@ -1,73 +1,126 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Task3Logic;
+
 
 namespace Task3.NUnitTests
 {
     [TestFixture]
     public class PolynomialNUnitTests
     {
-        [Test]
-        public void Op_AdditionTwoPolynomials_Test()
+        #region Plus
+
+        public IEnumerable<TestCaseData> TestPlusData
         {
-            var a = new Polynomial(1, 2, 3);
-            var b = new Polynomial(2, 4, 6);
-
-            var expected = new Polynomial(3, 6, 9);
-            var c = a + b;
-
-            CollectionAssert.AreEqual(expected.Coefficients, c.Coefficients);
+            get
+            {
+                yield return new TestCaseData(new Polynomial(0, 1), null).Throws(typeof(ArgumentNullException));
+                yield return new TestCaseData(new Polynomial(1, 2, 3), new Polynomial(2, 3, 4)).Returns(new Polynomial(3, 5, 7));
+                yield return new TestCaseData(new Polynomial(-4, -2, 0), new Polynomial(2, 3, 4, 5)).Returns(new Polynomial(-2, 1, 4, 5));
+                yield return new TestCaseData(new Polynomial(-4, 10, 33), new Polynomial(2, 1, 2, 1)).Returns(new Polynomial(-2, 11, 35, 1));
+            }
         }
 
-        [Test]
-        public void Op_UnaryNegation_Test()
+        [Test, TestCaseSource(nameof(TestPlusData))]
+        public Polynomial PlusOperator_AddTwoPolynomials_Test(Polynomial p1, Polynomial p2)
         {
-            var a = new Polynomial(1, 2, 3);
-
-            var expected = new Polynomial(-1, -2, -3);
-
-            var actual = -a;
-
-            CollectionAssert.AreEqual(expected.Coefficients, actual.Coefficients);
+            return p1 + p2;
         }
 
-        [Test]
-        public void Op_Subtraction_Test()
+        #endregion
+
+        #region Multiplication
+
+        public IEnumerable<TestCaseData> TestMultiplyData
         {
-            var a = new Polynomial(6, 6, 6);
-            var b = new Polynomial(1, 2, 3);
-
-            var expected = new Polynomial(5, 4, 3);
-
-            var actual = a - b;
-
-            CollectionAssert.AreEqual(expected.Coefficients, actual.Coefficients);
+            get
+            {
+                yield return new TestCaseData(new Polynomial(0, 1), null).Throws(typeof(ArgumentNullException));
+                yield return new TestCaseData(new Polynomial(1, 2), new Polynomial(1)).Returns(new Polynomial(1, 2));
+                yield return new TestCaseData(new Polynomial(-4, -2, 0), new Polynomial(2, 3, 4, 5)).Returns(new Polynomial(-8, -16, -22, -28, -10));
+            }
         }
 
-        [Test]
-        public void Op_Multiply_Test()
+        [Test, TestCaseSource(nameof(TestMultiplyData))]
+        public Polynomial MultiplyOperator_MultiplyPolynomailsWithYield(Polynomial p1, Polynomial p2)
         {
-            var a = new Polynomial(1, 2, 3);
-            var b = new Polynomial(1, 2, 8, 4);
+            return p1 * p2;
+        }
 
-            var expected = new Polynomial(1, 4, 15, 26, 32, 12);
+        public IEnumerable<TestCaseData> TestMultiplyOnDoubleData
+        {
+            get
+            {
+                yield return new TestCaseData(null, 2).Throws(typeof(ArgumentNullException));
+                yield return new TestCaseData(new Polynomial(1, 2), 2).Returns(new Polynomial(2, 4));
+                yield return new TestCaseData(new Polynomial(1, 2, 3), 1).Returns(new Polynomial(1,2,3));
+                yield return new TestCaseData(new Polynomial(-4, -2, 3, 0), -2).Returns(new Polynomial(8, 4, -6));
+            }
+        }
 
-            var actual = a * b;
+        [Test, TestCaseSource(nameof(TestMultiplyOnDoubleData))]
+        public Polynomial MultiplyOperator_MultiplyPolynomailOnDoubleWithYield(Polynomial p, double x)
+        {
+            return p * x;
+        }
+        #endregion
 
-            CollectionAssert.AreEqual(expected.Coefficients, actual.Coefficients);
+        #region Equals
+
+        public IEnumerable<TestCaseData> TestEqualsData
+        {
+            get
+            {
+                yield return new TestCaseData(new Polynomial(1, 2, 3)).Returns(true);
+                yield return new TestCaseData(new Polynomial(1, 2, 3, 0, 0, 0)).Returns(false);
+                yield return new TestCaseData(new Polynomial(1, 2)).Returns(false);
+                yield return new TestCaseData(null).Returns(false);
+            }
+        }
+
+        [Test, TestCaseSource(nameof(TestEqualsData))]
+        public bool Equals_CompareTwoPolynomialsWithYield(Polynomial p)
+        {
+            Polynomial p1 = new Polynomial(1, 2, 3);
+            return p1.Equals(p);
+        }
+        #endregion
+
+        #region ToString
+        public IEnumerable<TestCaseData> TestToStringData
+        {
+            get
+            {
+                yield return new TestCaseData().Returns("1+2x+3x^2");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(TestToStringData))]
+        public string ToString_ReturnStringWithYield()
+        {
+            var p = new Polynomial(1, 2, 3);
+            return p.ToString();
+        }
+
+        #endregion
+
+        [Test]
+        [TestCase(5,Result = 2343)]
+        public double Evaluate_Test(double value)
+        {
+            var p = new Polynomial(3, 3, 3, 3, 3);
+            
+            return p.Evaluate(value);
         }
 
         [Test]
         public void Differentiate_Test()
         {
-            var a = new Polynomial(100, 20, 4, 5, 5);
+            var p = new Polynomial(100, 20, 4, 5, 5);
 
             var expected = new Polynomial(20, 8, 15, 20);
-            var actual = a.Differentiate();
+            var actual = p.Differentiate();
 
             CollectionAssert.AreEqual(expected.Coefficients, actual.Coefficients);
         }
@@ -75,23 +128,12 @@ namespace Task3.NUnitTests
         [Test]
         public void Integrate_Test()
         {
-            var a = new Polynomial(20, 8, 15, 20); 
+            var p = new Polynomial(20, 8, 15, 20);
 
             var expected = new Polynomial(100, 20, 4, 5, 5);
-            var actual = a.Integrate(100);
+            var actual = p.Integrate(100);
 
             CollectionAssert.AreEqual(expected.Coefficients, actual.Coefficients);
-        }
-
-        [Test]
-        public void Evaluate_Test()
-        {
-            var a = new Polynomial(3, 3, 3, 3, 3);
-
-            var expected = 2343;
-            var actual = a.Evaluate(5);
-
-            Assert.AreEqual(expected, actual);
         }
     }
 }
